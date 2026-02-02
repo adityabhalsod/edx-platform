@@ -407,11 +407,11 @@ class TestXBlockInCourse(SharedModuleStoreTestCase):
         """
         # Enable new OPEN_EDX provider for this course
         course_key = self.course.location.course_key
-        # DiscussionsConfiguration.objects.create(
-        #     context_key=course_key,
-        #     enabled=True,
-        #     provider_type=Provider.OPEN_EDX,
-        # )
+        DiscussionsConfiguration.objects.create(
+            context_key=course_key,
+            enabled=True,
+            provider_type=Provider.OPEN_EDX,
+        )
 
         discussion_xblock = get_block_for_descriptor(
             user=self.user,
