@@ -18,7 +18,7 @@ class DiscussionConfigService:
     Service for providing discussion-related configuration and feature flags.
     """
 
-    def has_permission(self, user: User, permission: str, course_id: CourseKey = None) -> bool:
+    def has_permission(self, user: User, permission: str, course_id: CourseKey | None = None) -> bool:
         """
         Return whether the user has the given discussion permission for a given course.
         """
