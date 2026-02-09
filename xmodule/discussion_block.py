@@ -35,7 +35,7 @@ def _(text):
 @XBlock.needs('user')  # pylint: disable=abstract-method
 @XBlock.needs('i18n')
 @XBlock.needs('mako')
-@XBlock.needs('discussion_config_service')
+@XBlock.wants('discussion_config_service')
 class _BuiltInDiscussionXBlock(XBlock, StudioEditableXBlockMixin,
                                XmlMixin):  # lint-amnesty, pylint: disable=abstract-method
     """
