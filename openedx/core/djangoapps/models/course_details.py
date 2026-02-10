@@ -2,7 +2,6 @@
 CourseDetails
 """
 
-
 import logging
 import re
 
@@ -11,26 +10,32 @@ from xblock.fields import Date
 
 from openedx.core.djangolib.markup import HTML
 from openedx.core.lib.courses import course_image_url
-from xmodule.data import CertificatesDisplayBehaviors  # lint-amnesty, pylint: disable=wrong-import-order
-from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
-from xmodule.modulestore.exceptions import ItemNotFoundError  # lint-amnesty, pylint: disable=wrong-import-order
+from xmodule.data import (
+    CertificatesDisplayBehaviors,
+)  # lint-amnesty, pylint: disable=wrong-import-order
+from xmodule.modulestore.django import (
+    modulestore,
+)  # lint-amnesty, pylint: disable=wrong-import-order
+from xmodule.modulestore.exceptions import (
+    ItemNotFoundError,
+)  # lint-amnesty, pylint: disable=wrong-import-order
 
 # This list represents the attribute keys for a course's 'about' info.
 # Note: The 'video' attribute is intentionally excluded as it must be
 # handled separately; its value maps to an alternate key name.
 ABOUT_ATTRIBUTES = [
-    'syllabus',
-    'title',
-    'subtitle',
-    'duration',
-    'description',
-    'short_description',
-    'overview',
-    'effort',
-    'entrance_exam_enabled',
-    'entrance_exam_id',
-    'entrance_exam_minimum_score_pct',
-    'about_sidebar_html',
+    "syllabus",
+    "title",
+    "subtitle",
+    "duration",
+    "description",
+    "short_description",
+    "overview",
+    "effort",
+    "entrance_exam_enabled",
+    "entrance_exam_id",
+    "entrance_exam_minimum_score_pct",
+    "about_sidebar_html",
 ]
 
 
@@ -38,6 +43,7 @@ class CourseDetails:
     """
     An interface for extracting course information from the modulestore.
     """
+
     def __init__(self, org, course_id, run):
         # still need these for now b/c the client's screen shows these 3
         # fields
@@ -61,7 +67,9 @@ class CourseDetails:
         self.about_sidebar_html = ""
         self.intro_video = None  # a video pointer
         self.effort = None  # hours/week
-        self.license = "all-rights-reserved"  # default course license is all rights reserved
+        self.license = (
+            "all-rights-reserved"  # default course license is all rights reserved
+        )
         self.course_image_name = ""
         self.course_image_asset_path = ""  # URL of the course image
         self.banner_image_name = ""
@@ -77,16 +85,17 @@ class CourseDetails:
         self.self_paced = None
         self.learning_info = []
         self.instructor_info = []
+        self.is_reviewed = False
 
     @classmethod
     def fetch_about_attribute(cls, course_key, attribute):
         """
         Retrieve an attribute from a course's "about" info
         """
-        if attribute not in ABOUT_ATTRIBUTES + ['video']:
+        if attribute not in ABOUT_ATTRIBUTES + ["video"]:
             raise ValueError(f"'{attribute}' is not a valid course about attribute.")
 
-        usage_key = course_key.make_usage_key('about', attribute)
+        usage_key = course_key.make_usage_key("about", attribute)
         try:
             value = modulestore().get_item(usage_key).data
         except ItemNotFoundError:
@@ -110,9 +119,10 @@ class CourseDetails:
         course_details = cls(course_key.org, course_key.course, course_key.run)
         course_details.start_date = block.start
         course_details.end_date = block.end
-        updated_available_date, updated_display_behavior = cls.validate_certificate_settings(
-            block.certificate_available_date,
-            block.certificates_display_behavior
+        updated_available_date, updated_display_behavior = (
+            cls.validate_certificate_settings(
+                block.certificate_available_date, block.certificates_display_behavior
+            )
         )
         course_details.certificate_available_date = updated_available_date
         course_details.certificates_display_behavior = updated_display_behavior
@@ -120,15 +130,18 @@ class CourseDetails:
         course_details.enrollment_end = block.enrollment_end
         course_details.pre_requisite_courses = block.pre_requisite_courses
         course_details.course_image_name = block.course_image
-        course_details.course_image_asset_path = course_image_url(block, 'course_image')
+        course_details.course_image_asset_path = course_image_url(block, "course_image")
         course_details.banner_image_name = block.banner_image
-        course_details.banner_image_asset_path = course_image_url(block, 'banner_image')
+        course_details.banner_image_asset_path = course_image_url(block, "banner_image")
         course_details.video_thumbnail_image_name = block.video_thumbnail_image
-        course_details.video_thumbnail_image_asset_path = course_image_url(block, 'video_thumbnail_image')
+        course_details.video_thumbnail_image_asset_path = course_image_url(
+            block, "video_thumbnail_image"
+        )
         course_details.language = block.language
         course_details.self_paced = block.self_paced
         course_details.learning_info = block.learning_info
         course_details.instructor_info = block.instructor_info
+        course_details.is_reviewed = block.is_reviewed
         course_details.title = block.display_name
 
         # Default course license is "All Rights Reserved"
@@ -148,7 +161,7 @@ class CourseDetails:
         """
         Returns the course about video ID.
         """
-        raw_video = cls.fetch_about_attribute(course_key, 'video')
+        raw_video = cls.fetch_about_attribute(course_key, "video")
         if raw_video:
             return cls.parse_video_tag(raw_video)
 
@@ -167,7 +180,7 @@ class CourseDetails:
         Update the about item with the new data blob. If data is None,
         then delete the about item.
         """
-        temploc = course.id.make_usage_key('about', about_key)
+        temploc = course.id.make_usage_key("about", about_key)
         store = store or modulestore()
         if data is None:
             try:
@@ -179,7 +192,9 @@ class CourseDetails:
             try:
                 about_item = store.get_item(temploc)
             except ItemNotFoundError:
-                about_item = store.create_xblock(course.runtime, course.id, 'about', about_key)
+                about_item = store.create_xblock(
+                    course.runtime, course.id, "about", about_key
+                )
             about_item.data = data
             store.update_item(about_item, user_id, allow_not_found=True)
 
@@ -189,10 +204,12 @@ class CourseDetails:
         Updates the Course's about video to the given video ID.
         """
         recomposed_video_tag = CourseDetails.recompose_video_tag(video_id)
-        cls.update_about_item(course, 'video', recomposed_video_tag, user_id)
+        cls.update_about_item(course, "video", recomposed_video_tag, user_id)
 
     @classmethod
-    def update_from_json(cls, course_key, jsondict, user):  # pylint: disable=too-many-statements
+    def update_from_json(
+        cls, course_key, jsondict, user
+    ):  # pylint: disable=too-many-statements
         """
         Decode the json into CourseDetails and save any changed attrs to the db
         """
@@ -208,19 +225,19 @@ class CourseDetails:
         # is what the setter expects as input.
         date = Date()
 
-        if jsondict['overview'] == '':
-            jsondict['overview'] = '<p>&nbsp;</p>'
+        if jsondict["overview"] == "":
+            jsondict["overview"] = "<p>&nbsp;</p>"
 
-        if 'start_date' in jsondict:
-            converted = date.from_json(jsondict['start_date'])
+        if "start_date" in jsondict:
+            converted = date.from_json(jsondict["start_date"])
         else:
             converted = None
         if converted != block.start:
             dirty = True
             block.start = converted
 
-        if 'end_date' in jsondict:
-            converted = date.from_json(jsondict['end_date'])
+        if "end_date" in jsondict:
+            converted = date.from_json(jsondict["end_date"])
         else:
             converted = None
 
@@ -228,8 +245,8 @@ class CourseDetails:
             dirty = True
             block.end = converted
 
-        if 'enrollment_start' in jsondict:
-            converted = date.from_json(jsondict['enrollment_start'])
+        if "enrollment_start" in jsondict:
+            converted = date.from_json(jsondict["enrollment_start"])
         else:
             converted = None
 
@@ -237,8 +254,8 @@ class CourseDetails:
             dirty = True
             block.enrollment_start = converted
 
-        if 'enrollment_end' in jsondict:
-            converted = date.from_json(jsondict['enrollment_end'])
+        if "enrollment_end" in jsondict:
+            converted = date.from_json(jsondict["enrollment_end"])
         else:
             converted = None
 
@@ -246,8 +263,8 @@ class CourseDetails:
             dirty = True
             block.enrollment_end = converted
 
-        if 'certificate_available_date' in jsondict:
-            converted = date.from_json(jsondict['certificate_available_date'])
+        if "certificate_available_date" in jsondict:
+            converted = date.from_json(jsondict["certificate_available_date"])
         else:
             converted = None
 
@@ -256,50 +273,68 @@ class CourseDetails:
             block.certificate_available_date = converted
 
         if (
-            'certificates_display_behavior' in jsondict
-            and jsondict['certificates_display_behavior'] != block.certificates_display_behavior
+            "certificates_display_behavior" in jsondict
+            and jsondict["certificates_display_behavior"]
+            != block.certificates_display_behavior
         ):
-            block.certificates_display_behavior = jsondict['certificates_display_behavior']
+            block.certificates_display_behavior = jsondict[
+                "certificates_display_behavior"
+            ]
             dirty = True
 
-        if 'course_image_name' in jsondict and jsondict['course_image_name'] != block.course_image:
-            block.course_image = jsondict['course_image_name']
+        if (
+            "course_image_name" in jsondict
+            and jsondict["course_image_name"] != block.course_image
+        ):
+            block.course_image = jsondict["course_image_name"]
             dirty = True
 
-        if 'banner_image_name' in jsondict and jsondict['banner_image_name'] != block.banner_image:
-            block.banner_image = jsondict['banner_image_name']
+        if (
+            "banner_image_name" in jsondict
+            and jsondict["banner_image_name"] != block.banner_image
+        ):
+            block.banner_image = jsondict["banner_image_name"]
             dirty = True
 
-        if 'video_thumbnail_image_name' in jsondict \
-                and jsondict['video_thumbnail_image_name'] != block.video_thumbnail_image:
-            block.video_thumbnail_image = jsondict['video_thumbnail_image_name']
+        if (
+            "video_thumbnail_image_name" in jsondict
+            and jsondict["video_thumbnail_image_name"] != block.video_thumbnail_image
+        ):
+            block.video_thumbnail_image = jsondict["video_thumbnail_image_name"]
             dirty = True
 
-        if 'pre_requisite_courses' in jsondict \
-                and sorted(jsondict['pre_requisite_courses']) != sorted(block.pre_requisite_courses):
-            block.pre_requisite_courses = jsondict['pre_requisite_courses']
+        if "pre_requisite_courses" in jsondict and sorted(
+            jsondict["pre_requisite_courses"]
+        ) != sorted(block.pre_requisite_courses):
+            block.pre_requisite_courses = jsondict["pre_requisite_courses"]
             dirty = True
 
-        if 'license' in jsondict:
-            block.license = jsondict['license']
+        if "license" in jsondict:
+            block.license = jsondict["license"]
             dirty = True
 
-        if 'learning_info' in jsondict:
-            block.learning_info = jsondict['learning_info']
+        if "learning_info" in jsondict:
+            block.learning_info = jsondict["learning_info"]
             dirty = True
 
-        if 'instructor_info' in jsondict:
-            block.instructor_info = jsondict['instructor_info']
+        if "instructor_info" in jsondict:
+            block.instructor_info = jsondict["instructor_info"]
             dirty = True
 
-        if 'language' in jsondict and jsondict['language'] != block.language:
-            block.language = jsondict['language']
+        if "language" in jsondict and jsondict["language"] != block.language:
+            block.language = jsondict["language"]
             dirty = True
 
-        if (block.can_toggle_course_pacing
-                and 'self_paced' in jsondict
-                and jsondict['self_paced'] != block.self_paced):
-            block.self_paced = jsondict['self_paced']
+        if (
+            block.can_toggle_course_pacing
+            and "self_paced" in jsondict
+            and jsondict["self_paced"] != block.self_paced
+        ):
+            block.self_paced = jsondict["self_paced"]
+            dirty = True
+
+        if "is_reviewed" in jsondict and jsondict["is_reviewed"] != block.is_reviewed:
+            block.is_reviewed = jsondict["is_reviewed"]
             dirty = True
 
         if dirty:
@@ -313,7 +348,7 @@ class CourseDetails:
             if attribute in jsondict:
                 cls.update_about_item(block, attribute, jsondict[attribute], user.id)
 
-        cls.update_about_video(block, jsondict['intro_video'], user.id)
+        cls.update_about_video(block, jsondict["intro_video"], user.id)
 
         # Could just return jsondict w/o doing any db reads, but I put
         # the reads in as a means to confirm it persisted correctly
@@ -331,14 +366,17 @@ class CourseDetails:
         if not raw_video:
             return None
 
-        keystring_matcher = re.search(r'(?<=embed/)[a-zA-Z0-9_-]+', raw_video)
+        keystring_matcher = re.search(r"(?<=embed/)[a-zA-Z0-9_-]+", raw_video)
         if keystring_matcher is None:
-            keystring_matcher = re.search(r'<?=\d+:[a-zA-Z0-9_-]+', raw_video)
+            keystring_matcher = re.search(r"<?=\d+:[a-zA-Z0-9_-]+", raw_video)
 
         if keystring_matcher:
             return keystring_matcher.group(0)
         else:
-            logging.warn("ignoring the content because it doesn't not conform to expected pattern: " + raw_video)  # lint-amnesty, pylint: disable=deprecated-method, logging-not-lazy
+            logging.warn(
+                "ignoring the content because it doesn't not conform to expected pattern: "
+                + raw_video
+            )  # lint-amnesty, pylint: disable=deprecated-method, logging-not-lazy
             return None
 
     @staticmethod
@@ -351,14 +389,16 @@ class CourseDetails:
         #  the right thing
         result = None
         if video_key:
-            result = (
-                HTML('<iframe title="YouTube Video" width="560" height="315" src="//www.youtube.com/embed/{}?rel=0" '
-                     'frameborder="0" allowfullscreen=""></iframe>').format(video_key)
-            )
+            result = HTML(
+                '<iframe title="YouTube Video" width="560" height="315" src="//www.youtube.com/embed/{}?rel=0" '
+                'frameborder="0" allowfullscreen=""></iframe>'
+            ).format(video_key)
         return result
 
     @classmethod
-    def validate_certificate_settings(cls, certificate_available_date, certificates_display_behavior):
+    def validate_certificate_settings(
+        cls, certificate_available_date, certificates_display_behavior
+    ):
         """
         Takes the stored values for certificate_available_date and certificates_display_behavior and verifies they work
         together in tandem per ADR: lms/djangoapps/certificates/docs/decisions/005-cert-display-settings.rst
@@ -377,6 +417,9 @@ class CourseDetails:
 
         # If the date is set and "early_no_info" isn't
         if certificate_available_date:
-            return (certificate_available_date, CertificatesDisplayBehaviors.END_WITH_DATE)
+            return (
+                certificate_available_date,
+                CertificatesDisplayBehaviors.END_WITH_DATE,
+            )
 
         return (None, CertificatesDisplayBehaviors.END)

@@ -8,7 +8,8 @@ from openedx.core.lib.api.serializers import CourseKeyField
 
 
 class InstructorInfoSerializer(serializers.Serializer):
-    """ Serializer for instructor info """
+    """Serializer for instructor info"""
+
     name = serializers.CharField(allow_blank=True, required=False)
     title = serializers.SerializerMethodField()
     organization = serializers.CharField(allow_blank=True, required=False)
@@ -20,12 +21,16 @@ class InstructorInfoSerializer(serializers.Serializer):
 
 
 class InstructorsSerializer(serializers.Serializer):
-    """ Serializer for instructors """
-    instructors = InstructorInfoSerializer(many=True, allow_empty=True, allow_null=True, required=False)
+    """Serializer for instructors"""
+
+    instructors = InstructorInfoSerializer(
+        many=True, allow_empty=True, allow_null=True, required=False
+    )
 
 
 class CourseDetailsSerializer(serializers.Serializer):
-    """ Serializer for course details """
+    """Serializer for course details"""
+
     about_sidebar_html = serializers.CharField(allow_null=True, allow_blank=True)
     banner_image_name = serializers.CharField(allow_blank=True)
     banner_image_asset_path = serializers.CharField()
@@ -60,3 +65,4 @@ class CourseDetailsSerializer(serializers.Serializer):
     title = serializers.CharField(allow_blank=True)
     video_thumbnail_image_asset_path = serializers.CharField()
     video_thumbnail_image_name = serializers.CharField(allow_blank=True)
+    is_reviewed = serializers.BooleanField()
