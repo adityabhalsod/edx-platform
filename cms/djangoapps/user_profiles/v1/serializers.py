@@ -4,7 +4,7 @@ Serializers for the User Profiles API.
 
 from rest_framework import serializers
 
-from lms.djangoapps.user_profiles.models import UserProfile
+from cms.djangoapps.user_profiles.models import UserProfile
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

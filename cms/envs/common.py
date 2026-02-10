@@ -64,10 +64,10 @@ FEATURES = FeaturesProxy(globals())
 
 ############################ FEATURE CONFIGURATION #############################
 
-CONTACT_MAILING_ADDRESS = _('Your Contact Mailing Address Here')
+CONTACT_MAILING_ADDRESS = _("Your Contact Mailing Address Here")
 
 # Dummy secret key for dev/test
-SECRET_KEY = 'dev key'
+SECRET_KEY = "dev key"
 
 STUDIO_NAME = _("Your Platform Studio")
 STUDIO_SHORT_NAME = _("Studio")
@@ -77,7 +77,7 @@ STUDIO_SHORT_NAME = _("Studio")
 GITHUB_PUSH = False
 
 # email address for studio staff (eg to request course creation)
-STUDIO_REQUEST_EMAIL = ''
+STUDIO_REQUEST_EMAIL = ""
 
 # Segment - must explicitly turn it on for production
 CMS_SEGMENT_KEY = None
@@ -271,40 +271,41 @@ LMS_ROOT = REPO_ROOT / "lms"
 GITHUB_REPO_ROOT = ENV_ROOT / "data"
 
 ######################## BRANCH.IO ###########################
-BRANCH_IO_KEY = ''
+BRANCH_IO_KEY = ""
 
 ######################## HOTJAR ###########################
 HOTJAR_ID = 00000
 
 ############################# TEMPLATE CONFIGURATION #############################
 
-MAKO_TEMPLATE_DIRS_BASE.insert(3, COMMON_ROOT / 'static')
-MAKO_TEMPLATE_DIRS_BASE.append(CMS_ROOT / 'djangoapps' / 'pipeline_js' / 'templates')
-MAKO_TEMPLATE_DIRS_BASE.append(XMODULE_ROOT / 'capa' / 'templates')
+MAKO_TEMPLATE_DIRS_BASE.insert(3, COMMON_ROOT / "static")
+MAKO_TEMPLATE_DIRS_BASE.append(CMS_ROOT / "djangoapps" / "pipeline_js" / "templates")
+MAKO_TEMPLATE_DIRS_BASE.append(XMODULE_ROOT / "capa" / "templates")
 
 
 def make_lms_template_path(settings):
     """
     Make the path for the LMS "templates" dir
     """
-    templates_path = settings.PROJECT_ROOT / 'templates'
-    return templates_path.replace('cms', 'lms')
+    templates_path = settings.PROJECT_ROOT / "templates"
+    return templates_path.replace("cms", "lms")
+
 
 lms_mako_template_dirs_base[0] = Derived(make_lms_template_path)
 
-TEMPLATES[0]['DIRS'] = Derived(make_mako_template_dirs)
+TEMPLATES[0]["DIRS"] = Derived(make_mako_template_dirs)
 TEMPLATES.append(
     {
         # This separate copy of the Mako backend is used to render previews using the LMS templates
-        'NAME': 'preview',
-        'BACKEND': 'common.djangoapps.edxmako.backend.Mako',
-        'APP_DIRS': False,
-        'DIRS': lms_mako_template_dirs_base,
-        'OPTIONS': {
-            'context_processors': CONTEXT_PROCESSORS,
-            'debug': False,
-            'namespace': 'lms.main',
-        }
+        "NAME": "preview",
+        "BACKEND": "common.djangoapps.edxmako.backend.Mako",
+        "APP_DIRS": False,
+        "DIRS": lms_mako_template_dirs_base,
+        "OPTIONS": {
+            "context_processors": CONTEXT_PROCESSORS,
+            "debug": False,
+            "namespace": "lms.main",
+        },
     }
 )
 
@@ -314,116 +315,96 @@ AWS_SECURITY_TOKEN = None
 ##############################################################################
 
 # use the ratelimit backend to prevent brute force attacks
-AUTHENTICATION_BACKENDS.insert(0, 'auth_backends.backends.EdXOAuth2')
-AUTHENTICATION_BACKENDS.insert(2, 'openedx.core.djangoapps.content_libraries.auth.LtiAuthenticationBackend')
+AUTHENTICATION_BACKENDS.insert(0, "auth_backends.backends.EdXOAuth2")
+AUTHENTICATION_BACKENDS.insert(
+    2, "openedx.core.djangoapps.content_libraries.auth.LtiAuthenticationBackend"
+)
 
 LMS_BASE = None
 
 # Use LMS SSO for login, once enabled by setting LOGIN_URL (see docs/guides/studio_oauth.rst)
-SOCIAL_AUTH_STRATEGY = 'auth_backends.strategies.EdxDjangoStrategy'
-LOGIN_REDIRECT_URL = EDX_ROOT_URL + '/home/'
-LOGIN_URL = '/login/'
+SOCIAL_AUTH_STRATEGY = "auth_backends.strategies.EdxDjangoStrategy"
+LOGIN_REDIRECT_URL = EDX_ROOT_URL + "/home/"
+LOGIN_URL = "/login/"
 FRONTEND_LOGIN_URL = LOGIN_URL
 # Warning: Must have trailing slash to activate correct logout view
 # (auth_backends, not LMS user_authn)
-FRONTEND_LOGOUT_URL = '/logout/'
-FRONTEND_REGISTER_URL = Derived(lambda settings: settings.LMS_ROOT_URL + '/register')
+FRONTEND_LOGOUT_URL = "/logout/"
+FRONTEND_REGISTER_URL = Derived(lambda settings: settings.LMS_ROOT_URL + "/register")
 
-ENTERPRISE_API_URL = Derived(lambda settings: settings.LMS_INTERNAL_ROOT_URL + '/enterprise/api/v1/')
-ENTERPRISE_CONSENT_API_URL = Derived(lambda settings: settings.LMS_INTERNAL_ROOT_URL + '/consent/api/v1/')
+ENTERPRISE_API_URL = Derived(
+    lambda settings: settings.LMS_INTERNAL_ROOT_URL + "/enterprise/api/v1/"
+)
+ENTERPRISE_CONSENT_API_URL = Derived(
+    lambda settings: settings.LMS_INTERNAL_ROOT_URL + "/consent/api/v1/"
+)
 
 # Public domain name of Studio (should be resolvable from the end-user's browser)
 CMS_BASE = None
 CMS_ROOT_URL = None
 
-MAINTENANCE_BANNER_TEXT = 'Sample banner message'
+MAINTENANCE_BANNER_TEXT = "Sample banner message"
 
-CERT_QUEUE = 'certificates'
+CERT_QUEUE = "certificates"
 
 ################################# Middleware ###################################
 
 MIDDLEWARE = [
-    'openedx.core.lib.x_forwarded_for.middleware.XForwardedForMiddleware',
-    'edx_django_utils.security.csp.middleware.content_security_policy_middleware',
-
-    'crum.CurrentRequestUserMiddleware',
-
+    "openedx.core.lib.x_forwarded_for.middleware.XForwardedForMiddleware",
+    "edx_django_utils.security.csp.middleware.content_security_policy_middleware",
+    "crum.CurrentRequestUserMiddleware",
     # Resets the request cache.
-    'edx_django_utils.cache.middleware.RequestCacheMiddleware',
-
+    "edx_django_utils.cache.middleware.RequestCacheMiddleware",
     # Various monitoring middleware
-    'edx_django_utils.monitoring.CookieMonitoringMiddleware',
-    'edx_django_utils.monitoring.DeploymentMonitoringMiddleware',
-    'edx_django_utils.monitoring.FrontendMonitoringMiddleware',
-    'edx_django_utils.monitoring.MonitoringMemoryMiddleware',
-
-    'openedx.core.djangoapps.header_control.middleware.HeaderControlMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sites.middleware.CurrentSiteMiddleware',
-
+    "edx_django_utils.monitoring.CookieMonitoringMiddleware",
+    "edx_django_utils.monitoring.DeploymentMonitoringMiddleware",
+    "edx_django_utils.monitoring.FrontendMonitoringMiddleware",
+    "edx_django_utils.monitoring.MonitoringMemoryMiddleware",
+    "openedx.core.djangoapps.header_control.middleware.HeaderControlMiddleware",
+    "django.middleware.cache.UpdateCacheMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.sites.middleware.CurrentSiteMiddleware",
     # CORS and CSRF
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'openedx.core.djangoapps.cors_csrf.middleware.CorsCSRFMiddleware',
-    'openedx.core.djangoapps.cors_csrf.middleware.CsrfCrossDomainCookieMiddleware',
-
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "openedx.core.djangoapps.cors_csrf.middleware.CorsCSRFMiddleware",
+    "openedx.core.djangoapps.cors_csrf.middleware.CsrfCrossDomainCookieMiddleware",
     # JWT auth
-    'edx_rest_framework_extensions.auth.jwt.middleware.JwtAuthCookieMiddleware',
-
+    "edx_rest_framework_extensions.auth.jwt.middleware.JwtAuthCookieMiddleware",
     # Allows us to define redirects via Django admin
-    'django_sites_extensions.middleware.RedirectMiddleware',
-
+    "django_sites_extensions.middleware.RedirectMiddleware",
     # Instead of SessionMiddleware, we use a more secure version
     # 'django.contrib.sessions.middleware.SessionMiddleware',
-    'openedx.core.djangoapps.safe_sessions.middleware.SafeSessionMiddleware',
-
-    'method_override.middleware.MethodOverrideMiddleware',
-
+    "openedx.core.djangoapps.safe_sessions.middleware.SafeSessionMiddleware",
+    "method_override.middleware.MethodOverrideMiddleware",
     # Instead of AuthenticationMiddleware, we use a cache-backed version
-    'openedx.core.djangoapps.cache_toolbox.middleware.CacheBackedAuthenticationMiddleware',
-
-    'common.djangoapps.student.middleware.UserStandingMiddleware',
-
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'common.djangoapps.track.middleware.TrackMiddleware',
-
+    "openedx.core.djangoapps.cache_toolbox.middleware.CacheBackedAuthenticationMiddleware",
+    "common.djangoapps.student.middleware.UserStandingMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "common.djangoapps.track.middleware.TrackMiddleware",
     # This is used to set or update the user language preferences.
-    'openedx.core.djangoapps.lang_pref.middleware.LanguagePreferenceMiddleware',
-
+    "openedx.core.djangoapps.lang_pref.middleware.LanguagePreferenceMiddleware",
     # Allows us to dark-launch particular languages
-    'openedx.core.djangoapps.dark_lang.middleware.DarkLangMiddleware',
-
-    'openedx.core.djangoapps.embargo.middleware.EmbargoMiddleware',
-
+    "openedx.core.djangoapps.dark_lang.middleware.DarkLangMiddleware",
+    "openedx.core.djangoapps.embargo.middleware.EmbargoMiddleware",
     # Detects user-requested locale from 'accept-language' header in http request
-    'django.middleware.locale.LocaleMiddleware',
-
-    'codejail.django_integration.ConfigureCodeJailMiddleware',
-
+    "django.middleware.locale.LocaleMiddleware",
+    "codejail.django_integration.ConfigureCodeJailMiddleware",
     # for expiring inactive sessions
-    'openedx.core.djangoapps.session_inactivity_timeout.middleware.SessionInactivityTimeout',
-
-    'openedx.core.djangoapps.theming.middleware.CurrentSiteThemeMiddleware',
-
+    "openedx.core.djangoapps.session_inactivity_timeout.middleware.SessionInactivityTimeout",
+    "openedx.core.djangoapps.theming.middleware.CurrentSiteThemeMiddleware",
     # use Django built in clickjacking protection
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'waffle.middleware.WaffleMiddleware',
-
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "waffle.middleware.WaffleMiddleware",
     # Enables force_django_cache_miss functionality for TieredCache.
-    'edx_django_utils.cache.middleware.TieredCacheMiddleware',
-
+    "edx_django_utils.cache.middleware.TieredCacheMiddleware",
     # Adds monitoring attributes to requests.
-    'edx_rest_framework_extensions.middleware.RequestCustomAttributesMiddleware',
-
-    'edx_rest_framework_extensions.auth.jwt.middleware.EnsureJWTAuthSettingsMiddleware',
-
+    "edx_rest_framework_extensions.middleware.RequestCustomAttributesMiddleware",
+    "edx_rest_framework_extensions.auth.jwt.middleware.EnsureJWTAuthSettingsMiddleware",
     # Handles automatically storing user ids in django-simple-history tables when possible.
-    'simple_history.middleware.HistoryRequestMiddleware',
-
+    "simple_history.middleware.HistoryRequestMiddleware",
     # This must be last so that it runs first in the process_response chain
-    'openedx.core.djangoapps.site_configuration.middleware.SessionCookieDomainOverrideMiddleware',
+    "openedx.core.djangoapps.site_configuration.middleware.SessionCookieDomainOverrideMiddleware",
 ]
 
 EXTRA_MIDDLEWARE_CLASSES = []
@@ -442,167 +423,168 @@ XBLOCK_MIXINS = tuple(mixins)
 ############################ ORA 2 ############################################
 
 # By default, don't use a file prefix
-ORA2_FILE_PREFIX = 'default_env-default_deployment/ora2'
+ORA2_FILE_PREFIX = "default_env-default_deployment/ora2"
 
 ############################ Modulestore Configuration ################################
 
-CONTENTSTORE['DOC_STORE_CONFIG']['read_preference'] = 'PRIMARY'
+CONTENTSTORE["DOC_STORE_CONFIG"]["read_preference"] = "PRIMARY"
 
-MODULESTORE_BRANCH = 'draft-preferred'
+MODULESTORE_BRANCH = "draft-preferred"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 #################### Python sandbox ############################################
 
 # Needs to be non-zero so that jailed code can use it as their temp directory.(1MiB in bytes)
-CODE_JAIL['limits']['FSIZE'] = 1048576
+CODE_JAIL["limits"]["FSIZE"] = 1048576
 
 ############################ DJANGO_BUILTINS ################################
 
-COURSE_IMPORT_EXPORT_BUCKET = ''
-COURSE_METADATA_EXPORT_BUCKET = ''
+COURSE_IMPORT_EXPORT_BUCKET = ""
+COURSE_METADATA_EXPORT_BUCKET = ""
 
-ALTERNATE_WORKER_QUEUES = 'lms'
+ALTERNATE_WORKER_QUEUES = "lms"
 
 # .. setting_name: GIT_REPO_EXPORT_DIR
 # .. setting_default: '/edx/var/edxapp/export_course_repos'
 # .. setting_description: When courses are exported to git, either with the export_git management command or the git
 #   export view from the studio (when settings.ENABLE_EXPORT_GIT is True), they are stored in this directory, which
 #   must exist at the time of the export.
-GIT_REPO_EXPORT_DIR = '/edx/var/edxapp/export_course_repos'
+GIT_REPO_EXPORT_DIR = "/edx/var/edxapp/export_course_repos"
 # .. setting_name: GIT_EXPORT_DEFAULT_IDENT
 # .. setting_default: {'name': 'STUDIO_EXPORT_TO_GIT', 'email': 'STUDIO_EXPORT_TO_GIT@example.com'}
 # .. setting_description: When courses are exported to git, commits are signed with this name/email git identity.
 GIT_EXPORT_DEFAULT_IDENT = {
-    'name': 'STUDIO_EXPORT_TO_GIT',
-    'email': 'STUDIO_EXPORT_TO_GIT@example.com'
+    "name": "STUDIO_EXPORT_TO_GIT",
+    "email": "STUDIO_EXPORT_TO_GIT@example.com",
 }
 
 # Email
-TECH_SUPPORT_EMAIL = 'technical@example.com'
-EMAIL_FILE_PATH = Derived(lambda settings: path(settings.DATA_DIR) / "emails" / "studio")
-DEFAULT_FROM_EMAIL = 'registration@example.com'
-DEFAULT_FEEDBACK_EMAIL = 'feedback@example.com'
-TECH_SUPPORT_EMAIL = 'technical@example.com'
-CONTACT_EMAIL = 'info@example.com'
-BUGS_EMAIL = 'bugs@example.com'
-SERVER_EMAIL = 'devops@example.com'
-UNIVERSITY_EMAIL = 'university@example.com'
-PRESS_EMAIL = 'press@example.com'
+TECH_SUPPORT_EMAIL = "technical@example.com"
+EMAIL_FILE_PATH = Derived(
+    lambda settings: path(settings.DATA_DIR) / "emails" / "studio"
+)
+DEFAULT_FROM_EMAIL = "registration@example.com"
+DEFAULT_FEEDBACK_EMAIL = "feedback@example.com"
+TECH_SUPPORT_EMAIL = "technical@example.com"
+CONTACT_EMAIL = "info@example.com"
+BUGS_EMAIL = "bugs@example.com"
+SERVER_EMAIL = "devops@example.com"
+UNIVERSITY_EMAIL = "university@example.com"
+PRESS_EMAIL = "press@example.com"
 
 # Static content
-STATIC_URL = '/static/studio/'
-STATIC_ROOT = os.environ.get('STATIC_ROOT_CMS', ENV_ROOT / 'staticfiles' / 'studio')
+STATIC_URL = "/static/studio/"
+STATIC_ROOT = os.environ.get("STATIC_ROOT_CMS", ENV_ROOT / "staticfiles" / "studio")
 
 # Storage
-COURSE_IMPORT_EXPORT_STORAGE = 'django.core.files.storage.FileSystemStorage'
-COURSE_METADATA_EXPORT_STORAGE = 'django.core.files.storage.FileSystemStorage'
+COURSE_IMPORT_EXPORT_STORAGE = "django.core.files.storage.FileSystemStorage"
+COURSE_METADATA_EXPORT_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 ##### custom vendor plugin variables #####
 
 ############################### PIPELINE #######################################
 
-PIPELINE.update({
-    'JS_COMPRESSOR': None,
-    'COMPILERS': (),
-    'YUI_BINARY': 'yui-compressor',
-})
+PIPELINE.update(
+    {
+        "JS_COMPRESSOR": None,
+        "COMPILERS": (),
+        "YUI_BINARY": "yui-compressor",
+    }
+)
 
-PIPELINE['STYLESHEETS'] = {
-    'style-vendor': {
-        'source_filenames': [
-            'css/vendor/normalize.css',
-            'css/vendor/font-awesome.css',
-            'css/vendor/html5-input-polyfills/number-polyfill.css',
-            'js/vendor/CodeMirror/codemirror.css',
-            'css/vendor/ui-lightness/jquery-ui-1.8.22.custom.css',
-            'css/vendor/jquery.qtip.min.css',
-            'js/vendor/markitup/skins/simple/style.css',
-            'js/vendor/markitup/sets/wiki/style.css',
+PIPELINE["STYLESHEETS"] = {
+    "style-vendor": {
+        "source_filenames": [
+            "css/vendor/normalize.css",
+            "css/vendor/font-awesome.css",
+            "css/vendor/html5-input-polyfills/number-polyfill.css",
+            "js/vendor/CodeMirror/codemirror.css",
+            "css/vendor/ui-lightness/jquery-ui-1.8.22.custom.css",
+            "css/vendor/jquery.qtip.min.css",
+            "js/vendor/markitup/skins/simple/style.css",
+            "js/vendor/markitup/sets/wiki/style.css",
         ],
-        'output_filename': 'css/cms-style-vendor.css',
+        "output_filename": "css/cms-style-vendor.css",
     },
-    'style-vendor-tinymce-content': {
-        'source_filenames': [
-            'css/tinymce-studio-content-fonts.css',
-            'js/vendor/tinymce/js/tinymce/skins/ui/studio-tmce5/content.min.css',
-            'css/tinymce-studio-content.css'
+    "style-vendor-tinymce-content": {
+        "source_filenames": [
+            "css/tinymce-studio-content-fonts.css",
+            "js/vendor/tinymce/js/tinymce/skins/ui/studio-tmce5/content.min.css",
+            "css/tinymce-studio-content.css",
         ],
-        'output_filename': 'css/cms-style-vendor-tinymce-content.css',
+        "output_filename": "css/cms-style-vendor-tinymce-content.css",
     },
-    'style-vendor-tinymce-skin': {
-        'source_filenames': [
-            'js/vendor/tinymce/js/tinymce/skins/ui/studio-tmce5/skin.min.css'
+    "style-vendor-tinymce-skin": {
+        "source_filenames": [
+            "js/vendor/tinymce/js/tinymce/skins/ui/studio-tmce5/skin.min.css"
         ],
-        'output_filename': 'css/cms-style-vendor-tinymce-skin.css',
+        "output_filename": "css/cms-style-vendor-tinymce-skin.css",
     },
-    'style-main-v1': {
-        'source_filenames': [
-            'css/studio-main-v1.css',
+    "style-main-v1": {
+        "source_filenames": [
+            "css/studio-main-v1.css",
         ],
-        'output_filename': 'css/studio-main-v1.css',
+        "output_filename": "css/studio-main-v1.css",
     },
-    'style-main-v1-rtl': {
-        'source_filenames': [
-            'css/studio-main-v1-rtl.css',
+    "style-main-v1-rtl": {
+        "source_filenames": [
+            "css/studio-main-v1-rtl.css",
         ],
-        'output_filename': 'css/studio-main-v1-rtl.css',
+        "output_filename": "css/studio-main-v1-rtl.css",
     },
-    'style-xmodule-annotations': {
-        'source_filenames': [
-            'css/vendor/ova/annotator.css',
-            'css/vendor/ova/edx-annotator.css',
-            'css/vendor/ova/video-js.min.css',
-            'css/vendor/ova/rangeslider.css',
-            'css/vendor/ova/share-annotator.css',
-            'css/vendor/ova/richText-annotator.css',
-            'css/vendor/ova/tags-annotator.css',
-            'css/vendor/ova/flagging-annotator.css',
-            'css/vendor/ova/diacritic-annotator.css',
-            'css/vendor/ova/grouping-annotator.css',
-            'css/vendor/ova/ova.css',
-            'js/vendor/ova/catch/css/main.css'
+    "style-xmodule-annotations": {
+        "source_filenames": [
+            "css/vendor/ova/annotator.css",
+            "css/vendor/ova/edx-annotator.css",
+            "css/vendor/ova/video-js.min.css",
+            "css/vendor/ova/rangeslider.css",
+            "css/vendor/ova/share-annotator.css",
+            "css/vendor/ova/richText-annotator.css",
+            "css/vendor/ova/tags-annotator.css",
+            "css/vendor/ova/flagging-annotator.css",
+            "css/vendor/ova/diacritic-annotator.css",
+            "css/vendor/ova/grouping-annotator.css",
+            "css/vendor/ova/ova.css",
+            "js/vendor/ova/catch/css/main.css",
         ],
-        'output_filename': 'css/cms-style-xmodule-annotations.css',
+        "output_filename": "css/cms-style-xmodule-annotations.css",
     },
-    'course-unit-mfe-iframe-bundle': {
-        'source_filenames': [
-            'css/course-unit-mfe-iframe-bundle.css',
+    "course-unit-mfe-iframe-bundle": {
+        "source_filenames": [
+            "css/course-unit-mfe-iframe-bundle.css",
         ],
-        'output_filename': 'css/course-unit-mfe-iframe-bundle.css',
+        "output_filename": "css/course-unit-mfe-iframe-bundle.css",
     },
 }
 
 base_vendor_js = [
-    'js/src/utility.js',
-    'js/src/logger.js',
-    'common/js/vendor/jquery.js',
-    'common/js/vendor/jquery-migrate.js',
-    'js/vendor/jquery.cookie.js',
-    'js/vendor/url.min.js',
-    'common/js/vendor/underscore.js',
-    'common/js/vendor/underscore.string.js',
-    'common/js/vendor/backbone.js',
-    'js/vendor/URI.min.js',
-
+    "js/src/utility.js",
+    "js/src/logger.js",
+    "common/js/vendor/jquery.js",
+    "common/js/vendor/jquery-migrate.js",
+    "js/vendor/jquery.cookie.js",
+    "js/vendor/url.min.js",
+    "common/js/vendor/underscore.js",
+    "common/js/vendor/underscore.string.js",
+    "common/js/vendor/backbone.js",
+    "js/vendor/URI.min.js",
     # Make some edX UI Toolkit utilities available in the global "edx" namespace
-    'edx-ui-toolkit/js/utils/global-loader.js',
-    'edx-ui-toolkit/js/utils/string-utils.js',
-    'edx-ui-toolkit/js/utils/html-utils.js',
-
+    "edx-ui-toolkit/js/utils/global-loader.js",
+    "edx-ui-toolkit/js/utils/string-utils.js",
+    "edx-ui-toolkit/js/utils/html-utils.js",
     # Here we were loading Bootstrap and supporting libraries, but it no longer seems to be needed for any Studio UI.
     # 'common/js/vendor/bootstrap.bundle.js',
-
     # Finally load RequireJS
-    'common/js/vendor/require.js'
+    "common/js/vendor/require.js",
 ]
 
 # test_order: Determines the position of this chunk of javascript on
 # the jasmine test page
-PIPELINE['JAVASCRIPT'] = {
-    'base_vendor': {
-        'source_filenames': base_vendor_js,
-        'output_filename': 'js/cms-base-vendor.js',
+PIPELINE["JAVASCRIPT"] = {
+    "base_vendor": {
+        "source_filenames": base_vendor_js,
+        "output_filename": "js/cms-base-vendor.js",
     },
 }
 
@@ -615,14 +597,14 @@ REQUIRE_JS = "js/vendor/requiresjs/require.js"
 
 ############################ SERVICE_VARIANT ##################################
 
-SERVICE_VARIANT = 'cms'
+SERVICE_VARIANT = "cms"
 
 ################################# CELERY ######################################
 
 # Name the exchange and queues w.r.t the SERVICE_VARIANT
-HIGH_PRIORITY_QUEUE = f'edx.{SERVICE_VARIANT}.core.high'
-DEFAULT_PRIORITY_QUEUE = f'edx.{SERVICE_VARIANT}.core.default'
-LOW_PRIORITY_QUEUE = f'edx.{SERVICE_VARIANT}.core.low'
+HIGH_PRIORITY_QUEUE = f"edx.{SERVICE_VARIANT}.core.high"
+DEFAULT_PRIORITY_QUEUE = f"edx.{SERVICE_VARIANT}.core.default"
+LOW_PRIORITY_QUEUE = f"edx.{SERVICE_VARIANT}.core.low"
 
 CELERY_QUEUES = {
     HIGH_PRIORITY_QUEUE: {},
@@ -643,7 +625,7 @@ EXTENDED_VIDEO_TRANSCRIPT_LANGUAGES = []
 
 ############################# SETTINGS FOR VIDEO UPLOAD PIPELINE #############################
 
-VIDEO_UPLOAD_PIPELINE['CONCURRENT_UPLOAD_LIMIT'] = 4
+VIDEO_UPLOAD_PIPELINE["CONCURRENT_UPLOAD_LIMIT"] = 4
 
 ############################ APPS #####################################
 
@@ -652,252 +634,183 @@ VIDEO_UPLOAD_PIPELINE['CONCURRENT_UPLOAD_LIMIT'] = 4
 # RemovedInDjango19Warnings in the test logs.
 INSTALLED_APPS = [
     # Standard apps
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.humanize',
-    'django.contrib.redirects',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.humanize",
+    "django.contrib.redirects",
+    "django.contrib.sessions",
+    "django.contrib.sites",
+    "django.contrib.messages",
     # Tweaked version of django.contrib.staticfiles
-    'openedx.core.djangoapps.staticfiles.apps.EdxPlatformStaticFilesConfig',
-
-    'django_celery_results',
-
-    'method_override',
-
+    "openedx.core.djangoapps.staticfiles.apps.EdxPlatformStaticFilesConfig",
+    "django_celery_results",
+    "method_override",
     # Common Initialization
-    'openedx.core.djangoapps.common_initialization.apps.CommonInitializationConfig',
-
+    "openedx.core.djangoapps.common_initialization.apps.CommonInitializationConfig",
     # Common views
-    'openedx.core.djangoapps.common_views',
-
+    "openedx.core.djangoapps.common_views",
     # API access administration
-    'openedx.core.djangoapps.api_admin',
-
+    "openedx.core.djangoapps.api_admin",
     # CORS and cross-domain CSRF
-    'corsheaders',
-    'openedx.core.djangoapps.cors_csrf',
-
+    "corsheaders",
+    "openedx.core.djangoapps.cors_csrf",
     # Provides the 'django_markup' template library so we can use 'interpolate_html' in django templates
-    'xss_utils',
-
+    "xss_utils",
     # History tables
-    'simple_history',
-
+    "simple_history",
     # Database-backed configuration
-    'config_models',
-    'openedx.core.djangoapps.config_model_utils',
-    'waffle',
-
+    "config_models",
+    "openedx.core.djangoapps.config_model_utils",
+    "waffle",
     # Monitor the status of services
-    'openedx.core.djangoapps.service_status',
-
+    "openedx.core.djangoapps.service_status",
     # Video block configs (This will be moved to Video once it becomes an XBlock)
-    'openedx.core.djangoapps.video_config',
-
+    "openedx.core.djangoapps.video_config",
     # edX Video Pipeline integration
-    'openedx.core.djangoapps.video_pipeline',
-
+    "openedx.core.djangoapps.video_pipeline",
     # For CMS
-    'cms.djangoapps.contentstore.apps.ContentstoreConfig',
-    'common.djangoapps.split_modulestore_django.apps.SplitModulestoreDjangoBackendAppConfig',
-
-    'openedx.core.djangoapps.contentserver',
-    'cms.djangoapps.course_creators',
-    'common.djangoapps.student.apps.StudentConfig',  # misleading name due to sharing with lms
-    'openedx.core.djangoapps.course_groups',  # not used in cms (yet), but tests run
-    'cms.djangoapps.xblock_config.apps.XBlockConfig',
-    'cms.djangoapps.export_course_metadata.apps.ExportCourseMetadataConfig',
-    'cms.djangoapps.modulestore_migrator',
-
+    "cms.djangoapps.contentstore.apps.ContentstoreConfig",
+    "cms.djangoapps.user_profiles",
+    "common.djangoapps.split_modulestore_django.apps.SplitModulestoreDjangoBackendAppConfig",
+    "openedx.core.djangoapps.contentserver",
+    "cms.djangoapps.course_creators",
+    "common.djangoapps.student.apps.StudentConfig",  # misleading name due to sharing with lms
+    "openedx.core.djangoapps.course_groups",  # not used in cms (yet), but tests run
+    "cms.djangoapps.xblock_config.apps.XBlockConfig",
+    "cms.djangoapps.export_course_metadata.apps.ExportCourseMetadataConfig",
+    "cms.djangoapps.modulestore_migrator",
     # New (Learning-Core-based) XBlock runtime
-    'openedx.core.djangoapps.xblock.apps.StudioXBlockAppConfig',
-
-    'openedx.core.djangoapps.util.apps.UtilConfig',
-
+    "openedx.core.djangoapps.xblock.apps.StudioXBlockAppConfig",
+    "openedx.core.djangoapps.util.apps.UtilConfig",
     # Tracking
-    'common.djangoapps.track',
-    'eventtracking.django.apps.EventTrackingConfig',
-
+    "common.djangoapps.track",
+    "eventtracking.django.apps.EventTrackingConfig",
     # For asset pipelining
-    'common.djangoapps.edxmako.apps.EdxMakoConfig',
-    'pipeline',
-    'common.djangoapps.static_replace',
-    'require',
-    'webpack_loader',
-
+    "common.djangoapps.edxmako.apps.EdxMakoConfig",
+    "pipeline",
+    "common.djangoapps.static_replace",
+    "require",
+    "webpack_loader",
     # Site configuration for theming and behavioral modification
-    'openedx.core.djangoapps.site_configuration',
-
+    "openedx.core.djangoapps.site_configuration",
     # Ability to detect and special-case crawler behavior
-    'openedx.core.djangoapps.crawlers',
-
+    "openedx.core.djangoapps.crawlers",
     # Discussion
-    'openedx.core.djangoapps.django_comment_common',
-
+    "openedx.core.djangoapps.django_comment_common",
     # Notifications
-    'openedx.core.djangoapps.notifications',
-
+    "openedx.core.djangoapps.notifications",
     # for course creator table
-    'django.contrib.admin',
-
+    "django.contrib.admin",
     # for managing course modes
-    'common.djangoapps.course_modes.apps.CourseModesConfig',
-
+    "common.djangoapps.course_modes.apps.CourseModesConfig",
     # Verified Track Content Cohorting (Beta feature that will hopefully be removed)
-    'openedx.core.djangoapps.verified_track_content',
-
+    "openedx.core.djangoapps.verified_track_content",
     # Dark-launching languages
-    'openedx.core.djangoapps.dark_lang',
-
+    "openedx.core.djangoapps.dark_lang",
     #
     # User preferences
-    'wiki',
-    'django_notify',
-    'lms.djangoapps.course_wiki',  # Our customizations
-    'mptt',
-    'sekizai',
-    'openedx.core.djangoapps.user_api',
-
+    "wiki",
+    "django_notify",
+    "lms.djangoapps.course_wiki",  # Our customizations
+    "mptt",
+    "sekizai",
+    "openedx.core.djangoapps.user_api",
     # Country embargo support
-    'openedx.core.djangoapps.embargo',
-
+    "openedx.core.djangoapps.embargo",
     # Course action state
-    'common.djangoapps.course_action_state',
-
-    'openedx.core.djangoapps.content.course_overviews.apps.CourseOverviewsConfig',
-    'openedx.core.djangoapps.content.block_structure.apps.BlockStructureConfig',
-
+    "common.djangoapps.course_action_state",
+    "openedx.core.djangoapps.content.course_overviews.apps.CourseOverviewsConfig",
+    "openedx.core.djangoapps.content.block_structure.apps.BlockStructureConfig",
     # edx-milestones service
-    'milestones',
-
+    "milestones",
     # Credit courses
-    'openedx.core.djangoapps.credit.apps.CreditConfig',
-
-    'common.djangoapps.xblock_django',
-
+    "openedx.core.djangoapps.credit.apps.CreditConfig",
+    "common.djangoapps.xblock_django",
     # Catalog integration
-    'openedx.core.djangoapps.catalog',
-
+    "openedx.core.djangoapps.catalog",
     # Programs support
-    'openedx.core.djangoapps.programs.apps.ProgramsConfig',
-
+    "openedx.core.djangoapps.programs.apps.ProgramsConfig",
     # django-oauth-toolkit
-    'oauth2_provider',
-
+    "oauth2_provider",
     # These are apps that aren't strictly needed by Studio, but are imported by
     # other apps that are.  Django 1.8 wants to have imported models supported
     # by installed apps.
-    'openedx.core.djangoapps.oauth_dispatch.apps.OAuthDispatchAppConfig',
-    'lms.djangoapps.courseware',
-    'lms.djangoapps.coursewarehistoryextended',
-    'lms.djangoapps.survey.apps.SurveyConfig',
-    'lms.djangoapps.verify_student.apps.VerifyStudentConfig',
-    'completion',
-
+    "openedx.core.djangoapps.oauth_dispatch.apps.OAuthDispatchAppConfig",
+    "lms.djangoapps.courseware",
+    "lms.djangoapps.coursewarehistoryextended",
+    "lms.djangoapps.survey.apps.SurveyConfig",
+    "lms.djangoapps.verify_student.apps.VerifyStudentConfig",
+    "completion",
     # System Wide Roles
-    'openedx.core.djangoapps.system_wide_roles',
-
+    "openedx.core.djangoapps.system_wide_roles",
     # Static i18n support
-    'statici18n',
-
+    "statici18n",
     # Tagging
-    'cms.lib.xblock.tagging',
-
+    "cms.lib.xblock.tagging",
     # Enables default site and redirects
-    'django_sites_extensions',
-
+    "django_sites_extensions",
     # additional release utilities to ease automation
-    'release_util',
-
+    "release_util",
     # rule-based authorization
-    'rules.apps.AutodiscoverRulesConfig',
-    'bridgekeeper',
-
+    "rules.apps.AutodiscoverRulesConfig",
+    "bridgekeeper",
     # management of user-triggered async tasks (course import/export, etc.)
-    'user_tasks',
-
+    "user_tasks",
     # CMS specific user task handling
-    'cms.djangoapps.cms_user_tasks.apps.CmsUserTasksConfig',
-
+    "cms.djangoapps.cms_user_tasks.apps.CmsUserTasksConfig",
     # Unusual migrations
-    'common.djangoapps.database_fixups',
-
+    "common.djangoapps.database_fixups",
     # Customized celery tasks, including persisting failed tasks so they can
     # be retried
-    'celery_utils',
-
+    "celery_utils",
     # Waffle related utilities
-    'openedx.core.djangoapps.waffle_utils',
-
+    "openedx.core.djangoapps.waffle_utils",
     # DRF filters
-    'django_filters',
-    'cms.djangoapps.api',
-
+    "django_filters",
+    "cms.djangoapps.api",
     # edx-drf-extensions
-    'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens.
-
+    "csrf.apps.CsrfAppConfig",  # Enables frontend apps to retrieve CSRF tokens.
     # Entitlements, used in openedx tests
-    'common.djangoapps.entitlements',
-
+    "common.djangoapps.entitlements",
     # Asset management for mako templates
-    'common.djangoapps.pipeline_mako',
-
+    "common.djangoapps.pipeline_mako",
     # API Documentation
-    'drf_yasg',
-
+    "drf_yasg",
     # Tagging
-    'openedx_tagging.core.tagging.apps.TaggingConfig',
-    'openedx.core.djangoapps.content_tagging',
-
+    "openedx_tagging.core.tagging.apps.TaggingConfig",
+    "openedx.core.djangoapps.content_tagging",
     # Search
-    'openedx.core.djangoapps.content.search',
-
+    "openedx.core.djangoapps.content.search",
     # For Programs API
-    'lms.djangoapps.program_enrollments',
-
-    'openedx.features.course_duration_limits',
-    'openedx.features.content_type_gating',
-    'openedx.features.discounts',
-    'openedx.features.effort_estimation',
-    'lms.djangoapps.experiments',
-
-    'openedx.core.djangoapps.external_user_ids',
+    "lms.djangoapps.program_enrollments",
+    "openedx.features.course_duration_limits",
+    "openedx.features.content_type_gating",
+    "openedx.features.discounts",
+    "openedx.features.effort_estimation",
+    "lms.djangoapps.experiments",
+    "openedx.core.djangoapps.external_user_ids",
     # so sample_task is available to celery workers
-    'openedx.core.djangoapps.heartbeat',
-
+    "openedx.core.djangoapps.heartbeat",
     # signal handlers to capture course dates into edx-when
-    'openedx.core.djangoapps.course_date_signals',
-
+    "openedx.core.djangoapps.course_date_signals",
     # Management of per-user schedules
-    'openedx.core.djangoapps.schedules',
-    'rest_framework_jwt',
-
+    "openedx.core.djangoapps.schedules",
+    "rest_framework_jwt",
     # Learning Sequence Navigation
-    'openedx.core.djangoapps.content.learning_sequences.apps.LearningSequencesConfig',
-
+    "openedx.core.djangoapps.content.learning_sequences.apps.LearningSequencesConfig",
     # Database-backed Organizations App (http://github.com/openedx/edx-organizations)
-    'organizations',
-
+    "organizations",
     # User and group management via edx-django-utils
-    'edx_django_utils.user',
-
+    "edx_django_utils.user",
     # Allow Studio to use LMS for SSO
-    'social_django',
-
+    "social_django",
     # Content Library LTI 1.3 Support.
-    'pylti1p3.contrib.django.lti1p3_tool_config',
-
+    "pylti1p3.contrib.django.lti1p3_tool_config",
     # For edx ace template tags
-    'edx_ace',
-
+    "edx_ace",
     # alternative swagger generator for CMS API
-    'drf_spectacular',
-
-    'openedx_events',
-
+    "drf_spectacular",
+    "openedx_events",
     *openedx_learning_apps_to_install(),
 ]
 
@@ -929,77 +842,105 @@ DEFAULT_COURSE_LANGUAGE = "en"
 #               None to omit.
 #
 ADVANCED_PROBLEM_TYPES = [
-    {
-        'component': 'drag-and-drop-v2',
-        'boilerplate_name': None
-    },
-    {
-        'component': 'staffgradedxblock',
-        'boilerplate_name': None
-    }
+    {"component": "drag-and-drop-v2", "boilerplate_name": None},
+    {"component": "staffgradedxblock", "boilerplate_name": None},
 ]
 
-LIBRARY_BLOCK_TYPES = [
-    {
-        'component': 'library_content',
-        'boilerplate_name': None
-    }
-]
+LIBRARY_BLOCK_TYPES = [{"component": "library_content", "boilerplate_name": None}]
 
 ############### Settings for Retirement #####################
 # See annotations in lms/envs/common.py for details.
-RETIRED_USERNAME_FMT = Derived(lambda settings: settings.RETIRED_USERNAME_PREFIX + '{}')
+RETIRED_USERNAME_FMT = Derived(lambda settings: settings.RETIRED_USERNAME_PREFIX + "{}")
 # See annotations in lms/envs/common.py for details.
-RETIRED_EMAIL_FMT = Derived(lambda settings: settings.RETIRED_EMAIL_PREFIX + '{}@' + settings.RETIRED_EMAIL_DOMAIN)
+RETIRED_EMAIL_FMT = Derived(
+    lambda settings: settings.RETIRED_EMAIL_PREFIX
+    + "{}@"
+    + settings.RETIRED_EMAIL_DOMAIN
+)
 # See annotations in lms/envs/common.py for details.
-RETIRED_USER_SALTS = ['abc', '123']
+RETIRED_USER_SALTS = ["abc", "123"]
 # See annotations in lms/envs/common.py for details.
-RETIREMENT_SERVICE_WORKER_USERNAME = 'RETIREMENT_SERVICE_USER'
+RETIREMENT_SERVICE_WORKER_USERNAME = "RETIREMENT_SERVICE_USER"
 
 # Files and Uploads type filter values
 
 FILES_AND_UPLOAD_TYPE_FILTERS = {
-    "Images": ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/tiff', 'image/tif', 'image/x-icon',
-               'image/svg+xml', 'image/bmp', 'image/x-ms-bmp', ],
-    "Documents": [
-        'application/pdf',
-        'text/plain',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-        'application/vnd.openxmlformats-officedocument.presentationml.template',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
-        'application/msword',
-        'application/vnd.ms-excel',
-        'application/vnd.ms-powerpoint',
-        'application/csv',
-        'application/vnd.ms-excel.sheet.macroEnabled.12',
-        'text/x-tex',
-        'application/x-pdf',
-        'application/vnd.ms-excel.sheet.macroenabled.12',
-        'file/pdf',
-        'image/pdf',
-        'text/csv',
-        'text/pdf',
-        'text/x-sh',
-        '\"application/pdf\"',
+    "Images": [
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "image/gif",
+        "image/tiff",
+        "image/tif",
+        "image/x-icon",
+        "image/svg+xml",
+        "image/bmp",
+        "image/x-ms-bmp",
     ],
-    "Audio": ['audio/mpeg', 'audio/mp3', 'audio/x-wav', 'audio/ogg', 'audio/wav', 'audio/aac', 'audio/x-m4a',
-              'audio/mp4', 'audio/x-ms-wma', ],
-    "Code": ['application/json', 'text/html', 'text/javascript', 'application/javascript', 'text/css', 'text/x-python',
-             'application/x-java-jnlp-file', 'application/xml', 'application/postscript', 'application/x-javascript',
-             'application/java-vm', 'text/x-c++src', 'text/xml', 'text/x-scss', 'application/x-python-code',
-             'application/java-archive', 'text/x-python-script', 'application/x-ruby', 'application/mathematica',
-             'text/coffeescript', 'text/x-matlab', 'application/sql', 'text/php', ]
+    "Documents": [
+        "application/pdf",
+        "text/plain",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
+        "application/vnd.openxmlformats-officedocument.presentationml.template",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
+        "application/msword",
+        "application/vnd.ms-excel",
+        "application/vnd.ms-powerpoint",
+        "application/csv",
+        "application/vnd.ms-excel.sheet.macroEnabled.12",
+        "text/x-tex",
+        "application/x-pdf",
+        "application/vnd.ms-excel.sheet.macroenabled.12",
+        "file/pdf",
+        "image/pdf",
+        "text/csv",
+        "text/pdf",
+        "text/x-sh",
+        '"application/pdf"',
+    ],
+    "Audio": [
+        "audio/mpeg",
+        "audio/mp3",
+        "audio/x-wav",
+        "audio/ogg",
+        "audio/wav",
+        "audio/aac",
+        "audio/x-m4a",
+        "audio/mp4",
+        "audio/x-ms-wma",
+    ],
+    "Code": [
+        "application/json",
+        "text/html",
+        "text/javascript",
+        "application/javascript",
+        "text/css",
+        "text/x-python",
+        "application/x-java-jnlp-file",
+        "application/xml",
+        "application/postscript",
+        "application/x-javascript",
+        "application/java-vm",
+        "text/x-c++src",
+        "text/xml",
+        "text/x-scss",
+        "application/x-python-code",
+        "application/java-archive",
+        "text/x-python-script",
+        "application/x-ruby",
+        "application/mathematica",
+        "text/coffeescript",
+        "text/x-matlab",
+        "application/sql",
+        "text/php",
+    ],
 }
 
-ELASTIC_FIELD_MAPPINGS = {
-    "start_date": {
-        "type": "date"
-    }
-}
+ELASTIC_FIELD_MAPPINGS = {"start_date": {"type": "date"}}
 
 XBLOCK_FS_STORAGE_BUCKET = None
 XBLOCK_FS_STORAGE_PREFIX = None
@@ -1023,41 +964,47 @@ USER_TASKS_MAX_AGE = timedelta(days=7)
 # .. setting_warning: The DEFAULT_GRADE_DESIGNATIONS list must have more than one designation,
 #     or else ['A', 'B', 'C', 'D'] will be used as the default grade designations. Also, only the first
 #     11 grade designations are used by the UI, so it's advisable to restrict the list to 11 items.
-DEFAULT_GRADE_DESIGNATIONS = ['A', 'B', 'C', 'D']
+DEFAULT_GRADE_DESIGNATIONS = ["A", "B", "C", "D"]
 
 ########## Settings for video transcript migration tasks ############
-VIDEO_TRANSCRIPT_MIGRATIONS_JOB_QUEUE = Derived(lambda settings: settings.DEFAULT_PRIORITY_QUEUE)
+VIDEO_TRANSCRIPT_MIGRATIONS_JOB_QUEUE = Derived(
+    lambda settings: settings.DEFAULT_PRIORITY_QUEUE
+)
 
 ########## Settings youtube thumbnails scraper tasks ############
-SCRAPE_YOUTUBE_THUMBNAILS_JOB_QUEUE = Derived(lambda settings: settings.DEFAULT_PRIORITY_QUEUE)
+SCRAPE_YOUTUBE_THUMBNAILS_JOB_QUEUE = Derived(
+    lambda settings: settings.DEFAULT_PRIORITY_QUEUE
+)
 
 ########## Settings update search index task ############
-UPDATE_SEARCH_INDEX_JOB_QUEUE = Derived(lambda settings: settings.DEFAULT_PRIORITY_QUEUE)
+UPDATE_SEARCH_INDEX_JOB_QUEUE = Derived(
+    lambda settings: settings.DEFAULT_PRIORITY_QUEUE
+)
 
 ###################### VIDEO IMAGE STORAGE ######################
 
-VIDEO_IMAGE_DEFAULT_FILENAME = 'images/video-images/default_video_image.png'
+VIDEO_IMAGE_DEFAULT_FILENAME = "images/video-images/default_video_image.png"
 VIDEO_IMAGE_SUPPORTED_FILE_FORMATS = {
-    '.bmp': 'image/bmp',
-    '.bmp2': 'image/x-ms-bmp',   # PIL gives x-ms-bmp format
-    '.gif': 'image/gif',
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.png': 'image/png'
+    ".bmp": "image/bmp",
+    ".bmp2": "image/x-ms-bmp",  # PIL gives x-ms-bmp format
+    ".gif": "image/gif",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
 }
-VIDEO_IMAGE_MAX_FILE_SIZE_MB = '2 MB'
-VIDEO_IMAGE_MIN_FILE_SIZE_KB = '2 KB'
+VIDEO_IMAGE_MAX_FILE_SIZE_MB = "2 MB"
+VIDEO_IMAGE_MIN_FILE_SIZE_KB = "2 KB"
 VIDEO_IMAGE_MAX_WIDTH = 1280
 VIDEO_IMAGE_MAX_HEIGHT = 720
 VIDEO_IMAGE_MIN_WIDTH = 640
 VIDEO_IMAGE_MIN_HEIGHT = 360
 VIDEO_IMAGE_ASPECT_RATIO = 16 / 9.0
-VIDEO_IMAGE_ASPECT_RATIO_TEXT = '16:9'
+VIDEO_IMAGE_ASPECT_RATIO_TEXT = "16:9"
 VIDEO_IMAGE_ASPECT_RATIO_ERROR_MARGIN = 0.1
 
 ###################### ZENDESK ######################
-ZENDESK_USER = ''
-ZENDESK_API_KEY = ''
+ZENDESK_USER = ""
+ZENDESK_API_KEY = ""
 
 ############## Installed Django Apps #########################
 
@@ -1072,11 +1019,11 @@ add_plugins(__name__, ProjectType.CMS, SettingsType.COMMON)
 # See: https://docs.python.org/2/library/wsgiref.html#wsgiref.util.FileWrapper
 COURSE_EXPORT_DOWNLOAD_CHUNK_SIZE = 8192
 
-COMMENTS_SERVICE_URL = 'http://localhost:18080'
-COMMENTS_SERVICE_KEY = 'password'
+COMMENTS_SERVICE_URL = "http://localhost:18080"
+COMMENTS_SERVICE_KEY = "password"
 
-EXAMS_SERVICE_URL = 'http://localhost:18740/api/v1'
-EXAMS_SERVICE_USERNAME = 'edx_exams_worker'
+EXAMS_SERVICE_URL = "http://localhost:18740/api/v1"
+EXAMS_SERVICE_USERNAME = "edx_exams_worker"
 
 ############# CORS headers for cross-domain requests #################
 
@@ -1084,30 +1031,30 @@ EXAMS_SERVICE_USERNAME = 'edx_exams_worker'
 # because that decision might happen in a later config file. (The headers to
 # allow is an application logic, and not site policy.)
 CORS_ALLOW_HEADERS = corsheaders_default_headers + (
-    'use-jwt-cookie',
-    'content-range',
-    'content-disposition',
+    "use-jwt-cookie",
+    "content-range",
+    "content-disposition",
 )
 
 ########################## VIDEO IMAGE STORAGE ############################
 
 VIDEO_IMAGE_SETTINGS = dict(
-    VIDEO_IMAGE_MAX_BYTES=2 * 1024 * 1024,    # 2 MB
-    VIDEO_IMAGE_MIN_BYTES=2 * 1024,       # 2 KB
+    VIDEO_IMAGE_MAX_BYTES=2 * 1024 * 1024,  # 2 MB
+    VIDEO_IMAGE_MIN_BYTES=2 * 1024,  # 2 KB
     # Backend storage
     # STORAGE_CLASS='storages.backends.s3boto3.S3Boto3Storage',
     # STORAGE_KWARGS=dict(bucket='video-image-bucket'),
     STORAGE_KWARGS=dict(
         location=MEDIA_ROOT,
     ),
-    DIRECTORY_PREFIX='video-images/',
+    DIRECTORY_PREFIX="video-images/",
     BASE_URL=MEDIA_URL,
 )
 
 VIDEO_IMAGE_MAX_AGE = 31536000
 
 ##### shoppingcart Payment #####
-PAYMENT_SUPPORT_EMAIL = 'billing@example.com'
+PAYMENT_SUPPORT_EMAIL = "billing@example.com"
 
 ################################ Bulk Email ###################################
 # Parameters for breaking down course enrollment into subtasks.
@@ -1115,7 +1062,7 @@ BULK_EMAIL_EMAILS_PER_TASK = 500
 
 # Suffix used to construct 'from' email address for bulk emails.
 # A course-specific identifier is prepended.
-BULK_EMAIL_DEFAULT_FROM_EMAIL = 'no-reply@example.com'
+BULK_EMAIL_DEFAULT_FROM_EMAIL = "no-reply@example.com"
 
 # Flag to indicate if individual email addresses should be logged as they are sent
 # a bulk email message.
@@ -1125,32 +1072,32 @@ BULK_EMAIL_LOG_SENT_EMAILS = False
 # These keys are used for all of our asynchronous downloadable files, including
 # the ones that contain information other than grades.
 GRADES_DOWNLOAD = {
-    'STORAGE_CLASS': 'django.core.files.storage.FileSystemStorage',
-    'STORAGE_KWARGS': {
-        'location': '/tmp/edx-s3/grades',
+    "STORAGE_CLASS": "django.core.files.storage.FileSystemStorage",
+    "STORAGE_KWARGS": {
+        "location": "/tmp/edx-s3/grades",
     },
-    'STORAGE_TYPE': None,
-    'BUCKET': None,
-    'ROOT_PATH': None,
+    "STORAGE_TYPE": None,
+    "BUCKET": None,
+    "ROOT_PATH": None,
 }
 
 ############### Settings swift #####################################
 SWIFT_USE_TEMP_URLS = False
 
 ############### Settings for facebook ##############################
-FACEBOOK_APP_ID = 'FACEBOOK_APP_ID'
-FACEBOOK_APP_SECRET = 'FACEBOOK_APP_SECRET'
-FACEBOOK_API_VERSION = 'v2.1'
+FACEBOOK_APP_ID = "FACEBOOK_APP_ID"
+FACEBOOK_APP_SECRET = "FACEBOOK_APP_SECRET"
+FACEBOOK_API_VERSION = "v2.1"
 
 ###################### PROCTORING SETTINGS ##########################
 PROCTORING_SETTINGS = {}
 
 ###################### LEARNER PORTAL ################################
-LEARNER_PORTAL_URL_ROOT = 'https://learner-portal-localhost:18000'
+LEARNER_PORTAL_URL_ROOT = "https://learner-portal-localhost:18000"
 
 ############################ JWT #################################
 
-REGISTRATION_EXTRA_FIELDS['marketing_emails_opt_in'] = 'hidden'
+REGISTRATION_EXTRA_FIELDS["marketing_emails_opt_in"] = "hidden"
 EDXAPP_PARSE_KEYS = {}
 PARSE_KEYS = {}
 
@@ -1179,7 +1126,7 @@ DISABLE_DEPRECATED_SIGNIN_URL = False
 DISABLE_DEPRECATED_SIGNUP_URL = False
 
 ##### REGISTRATION RATE LIMIT SETTINGS #####
-OPTIONAL_FIELD_API_RATELIMIT = '10/h'
+OPTIONAL_FIELD_API_RATELIMIT = "10/h"
 
 ######################## Setting for content libraries ########################
 MAX_BLOCKS_PER_CONTENT_LIBRARY = 100_000
@@ -1213,12 +1160,12 @@ COURSE_LIVE_HELP_URL = "https://docs.openedx.org/en/latest/educators/how-tos/cou
 INACTIVE_USER_LOGIN = True
 
 # Redirect URL for inactive user. If not set, user will be redirected to /login after the login itself (loop)
-INACTIVE_USER_URL = f'http://{CMS_BASE}'
+INACTIVE_USER_URL = f"http://{CMS_BASE}"
 
 ######################## Discussion Forum settings ########################
 
 # Feedback link in upgraded discussion notification alert
-DISCUSSIONS_INCONTEXT_FEEDBACK_URL = ''
+DISCUSSIONS_INCONTEXT_FEEDBACK_URL = ""
 
 # Learn More link in upgraded discussion notification alert
 # pylint: disable=line-too-long
@@ -1231,40 +1178,50 @@ DISCUSSIONS_INCONTEXT_LEARNMORE_URL = "https://docs.openedx.org/en/latest/educat
 def _should_send_xblock_events(settings):
     return settings.ENABLE_SEND_XBLOCK_LIFECYCLE_EVENTS_OVER_BUS
 
-EVENT_BUS_PRODUCER_CONFIG.update({
-    'org.openedx.content_authoring.course.catalog_info.changed.v1': {
-        'course-catalog-info-changed':
-            {'event_key_field': 'catalog_info.course_key',
-             # .. toggle_name: EVENT_BUS_PRODUCER_CONFIG['org.openedx.content_authoring.course.catalog_info.changed.v1']
-             #    ['course-catalog-info-changed']['enabled']
-             # .. toggle_implementation: DjangoSetting
-             # .. toggle_default: False
-             # .. toggle_description: if enabled, will publish COURSE_CATALOG_INFO_CHANGED events to the event bus on
-             #    the course-catalog-info-changed topics
-             # .. toggle_warning: The default may be changed in a later release. See
-             #    https://github.com/openedx/openedx-events/issues/265
-             # .. toggle_use_cases: opt_in
-             # .. toggle_creation_date: 2023-10-10
-             'enabled': False},
-    },
-    'org.openedx.content_authoring.xblock.published.v1': {
-        'course-authoring-xblock-lifecycle':
-            {'event_key_field': 'xblock_info.usage_key', 'enabled': Derived(_should_send_xblock_events)},
-    },
-    'org.openedx.content_authoring.xblock.deleted.v1': {
-        'course-authoring-xblock-lifecycle':
-            {'event_key_field': 'xblock_info.usage_key', 'enabled': Derived(_should_send_xblock_events)},
-    },
-    'org.openedx.content_authoring.xblock.duplicated.v1': {
-        'course-authoring-xblock-lifecycle':
-            {'event_key_field': 'xblock_info.usage_key', 'enabled': Derived(_should_send_xblock_events)},
-    },
-})
+
+EVENT_BUS_PRODUCER_CONFIG.update(
+    {
+        "org.openedx.content_authoring.course.catalog_info.changed.v1": {
+            "course-catalog-info-changed": {
+                "event_key_field": "catalog_info.course_key",
+                # .. toggle_name: EVENT_BUS_PRODUCER_CONFIG['org.openedx.content_authoring.course.catalog_info.changed.v1']
+                #    ['course-catalog-info-changed']['enabled']
+                # .. toggle_implementation: DjangoSetting
+                # .. toggle_default: False
+                # .. toggle_description: if enabled, will publish COURSE_CATALOG_INFO_CHANGED events to the event bus on
+                #    the course-catalog-info-changed topics
+                # .. toggle_warning: The default may be changed in a later release. See
+                #    https://github.com/openedx/openedx-events/issues/265
+                # .. toggle_use_cases: opt_in
+                # .. toggle_creation_date: 2023-10-10
+                "enabled": False,
+            },
+        },
+        "org.openedx.content_authoring.xblock.published.v1": {
+            "course-authoring-xblock-lifecycle": {
+                "event_key_field": "xblock_info.usage_key",
+                "enabled": Derived(_should_send_xblock_events),
+            },
+        },
+        "org.openedx.content_authoring.xblock.deleted.v1": {
+            "course-authoring-xblock-lifecycle": {
+                "event_key_field": "xblock_info.usage_key",
+                "enabled": Derived(_should_send_xblock_events),
+            },
+        },
+        "org.openedx.content_authoring.xblock.duplicated.v1": {
+            "course-authoring-xblock-lifecycle": {
+                "event_key_field": "xblock_info.usage_key",
+                "enabled": Derived(_should_send_xblock_events),
+            },
+        },
+    }
+)
 
 ################### Authoring API ######################
 
 # This affects the Authoring API swagger docs but not the legacy swagger docs under /api-docs/.
-REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'
+REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
 
 ################### Studio Search (beta), using Meilisearch ###################
 
@@ -1288,31 +1245,31 @@ MEILISEARCH_API_KEY = "devkey"
 # .. In the future, we will support individual configuration per library - see
 # .. openedx/core/djangoapps/content_libraries/api.py::get_allowed_block_types()
 LIBRARY_ENABLED_BLOCKS = [
-    'problem',
-    'video',
-    'html',
-    'drag-and-drop-v2',
-    'openassessment',
-    'conditional',
-    'done',
-    'edx_sga',
-    'freetextresponse',
-    'google-calendar',
-    'google-document',
-    'invideoquiz',
-    'lti',
-    'lti_consumer',
-    'pdf',
-    'poll',
-    'survey',
-    'word_cloud',
+    "problem",
+    "video",
+    "html",
+    "drag-and-drop-v2",
+    "openassessment",
+    "conditional",
+    "done",
+    "edx_sga",
+    "freetextresponse",
+    "google-calendar",
+    "google-document",
+    "invideoquiz",
+    "lti",
+    "lti_consumer",
+    "pdf",
+    "poll",
+    "survey",
+    "word_cloud",
 ]
 
 # .. setting_name: DEFAULT_ORG_LOGO_URL
 # .. setting_default: Derived(lambda settings: settings.STATIC_URL + 'images/logo.png')
 # .. setting_description: The default logo url for organizations that do not have a logo set.
 # .. setting_warning: This url is used as a placeholder for organizations that do not have a logo set.
-DEFAULT_ORG_LOGO_URL = Derived(lambda settings: settings.STATIC_URL + 'images/logo.png')
+DEFAULT_ORG_LOGO_URL = Derived(lambda settings: settings.STATIC_URL + "images/logo.png")
 
 # Misc
-AUTHORING_API_URL = ''
+AUTHORING_API_URL = ""

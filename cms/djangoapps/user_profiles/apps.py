@@ -13,12 +13,12 @@ class UserProfilesConfig(AppConfig):
     Application Configuration for User Profiles.
     """
 
-    name = "lms.djangoapps.user_profiles"
+    name = "cms.djangoapps.user_profiles"
     verbose_name = "User Profiles"
 
     plugin_app = {
         PluginURLs.CONFIG: {
-            ProjectType.LMS: {
+            ProjectType.CMS: {
                 PluginURLs.NAMESPACE: "user_profiles",
                 PluginURLs.REGEX: r"^api/user_profiles/",
                 PluginURLs.RELATIVE_PATH: "urls",

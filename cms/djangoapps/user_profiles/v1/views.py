@@ -6,8 +6,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 
-from lms.djangoapps.user_profiles.models import UserProfile
-from lms.djangoapps.user_profiles.v1.serializers import UserProfileSerializer
+from cms.djangoapps.user_profiles.models import UserProfile
+from cms.djangoapps.user_profiles.v1.serializers import UserProfileSerializer
 
 
 class UserProfilePagination(PageNumberPagination):

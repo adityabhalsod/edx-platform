@@ -1732,8 +1732,6 @@ INSTALLED_APPS = [
     "lms.djangoapps.course_home_api",
     # User tours
     "lms.djangoapps.user_tours",
-    # User Profiles
-    "lms.djangoapps.user_profiles",
     # New (Learning-Core-based) XBlock runtime
     "openedx.core.djangoapps.xblock.apps.LmsXBlockAppConfig",
     # Student support tools

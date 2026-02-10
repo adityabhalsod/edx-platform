@@ -4,7 +4,7 @@ Django Admin registration for User Profiles.
 
 from django.contrib import admin
 
-from lms.djangoapps.user_profiles.models import UserProfile
+from cms.djangoapps.user_profiles.models import UserProfile
 
 
 @admin.register(UserProfile)

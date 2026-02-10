@@ -2,8 +2,8 @@
 Management command to seed fake user profiles.
 
 Usage:
-    ./manage.py lms seed_user_profiles
-    ./manage.py lms seed_user_profiles --count 20
+    ./manage.py cms seed_user_profiles
+    ./manage.py cms seed_user_profiles --count 20
 """
 
 import random
@@ -13,7 +13,7 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from lms.djangoapps.user_profiles.models import UserProfile
+from cms.djangoapps.user_profiles.models import UserProfile
 
 User = get_user_model()
 
