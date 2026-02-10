@@ -1102,9 +1102,6 @@ urlpatterns += [
     path("api/user_tours/", include("lms.djangoapps.user_tours.urls")),
 ]
 
-# User Profiles API urls
-urlpatterns += []
-
 # Course Experience API urls
 urlpatterns += [
     path(
