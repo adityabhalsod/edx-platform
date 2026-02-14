@@ -150,6 +150,8 @@ class CourseOverview(TimeStampedModel):
     external_id = models.CharField(max_length=128, null=True, blank=True)
 
     language = models.TextField(null=True)
+    is_reviewed = models.BooleanField(default=False)
+
 
     history = HistoricalRecords()
 

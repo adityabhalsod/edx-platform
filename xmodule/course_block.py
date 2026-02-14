@@ -1052,6 +1052,16 @@ class CourseFields:  # lint-amnesty, pylint: disable=missing-class-docstring
         scope=Scope.settings,
     )
 
+    is_reviewed = Boolean(
+        display_name=_("Course Reviewed"),
+        help=_(
+            "Enter true or false. If true, this indicates that the course has been reviewed and approved "
+            "for publication by the course review team."
+        ),
+        default=False,
+        scope=Scope.settings,
+    )
+
     other_course_settings = Dict(
         display_name=_("Other Course Settings"),
         help=_(
