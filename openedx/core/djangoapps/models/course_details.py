@@ -130,7 +130,10 @@ class CourseDetails:
         course_details.self_paced = block.self_paced
         course_details.learning_info = block.learning_info
         course_details.instructor_info = block.instructor_info
+        # This field added before
+        # -----------------------------------
         course_details.is_reviewed = block.is_reviewed
+        # -----------------------------------
         course_details.title = block.display_name
 
         # Default course license is "All Rights Reserved"
@@ -304,9 +307,12 @@ class CourseDetails:
             block.self_paced = jsondict['self_paced']
             dirty = True
         
+        # This field added before
+        # -----------------------------------
         if "is_reviewed" in jsondict and jsondict["is_reviewed"] != block.is_reviewed:
             block.is_reviewed = jsondict["is_reviewed"]
             dirty = True
+        # -----------------------------------
 
         if dirty:
             module_store.update_item(block, user.id)

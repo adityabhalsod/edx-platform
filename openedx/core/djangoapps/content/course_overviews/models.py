@@ -150,7 +150,10 @@ class CourseOverview(TimeStampedModel):
     external_id = models.CharField(max_length=128, null=True, blank=True)
 
     language = models.TextField(null=True)
+    # This field added before
+    # -----------------------------------
     is_reviewed = models.BooleanField(default=False)
+    # -----------------------------------
 
 
     history = HistoricalRecords()
@@ -255,6 +258,7 @@ class CourseOverview(TimeStampedModel):
         course_overview.effort = CourseDetails.fetch_about_attribute(course.id, 'effort')
         course_overview.course_video_url = CourseDetails.fetch_video_url(course.id)
         course_overview.self_paced = course.self_paced
+        course_overview.is_reviewed = course.is_reviewed
 
         course_overview.has_highlights = cls._get_course_has_highlights(course)
 

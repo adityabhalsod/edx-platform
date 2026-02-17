@@ -155,6 +155,12 @@ function(ValidatingView, CodeMirror, _, $, ui, DateUtils, FileUploadModel,
                 paceToggleTip.text(gettext('Course pacing cannot be changed once a course has started.'));
             }
 
+            if (this.model.get('is_reviewed')) {
+                this.$('#is-reviewed').prop('checked', true);
+            } else {
+                this.$('#is-reviewed').prop('checked', false);
+            }
+
             this.licenseView.render();
             this.learning_info_view.render();
             this.instructor_info_view.render();
@@ -188,7 +194,8 @@ function(ValidatingView, CodeMirror, _, $, ui, DateUtils, FileUploadModel,
             course_settings_learning_fields: 'course-settings-learning-fields',
             add_course_learning_info: 'add-course-learning-info',
             add_course_instructor_info: 'add-course-instructor-info',
-            course_learning_info: 'course-learning-info'
+            course_learning_info: 'course-learning-info',
+            is_reviewed: 'is-reviewed'
         },
 
         addLearningFields: function() {
@@ -306,6 +313,9 @@ function(ValidatingView, CodeMirror, _, $, ui, DateUtils, FileUploadModel,
             // Fallthrough to handle both radio buttons
             case 'course-pace-instructor-paced':
                 this.model.set('self_paced', JSON.parse(event.currentTarget.value));
+                break;
+            case 'is-reviewed':
+                this.model.set('is_reviewed', $(event.currentTarget).is(':checked'));
                 break;
             case 'certificates-display-behavior':
                 this.setField(event);

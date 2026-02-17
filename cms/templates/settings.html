@@ -212,6 +212,22 @@ CMS.URL.UPLOAD_ASSET = '${upload_asset_url | n, js_escaped_string}'
 
         <hr class="divide" />
 
+        <div class="group-settings review-status">
+          <header>
+            <h2 class="title-2">${_("Course Review Status")}</h2>
+            <span class="tip">${_("Mark this course as reviewed")}</span>
+          </header>
+          <ol class="list-input">
+            <li class="field">
+              <input type="checkbox" id="is-reviewed" />
+              <label for="is-reviewed">${_("Course has been reviewed")}</label>
+              <span class="tip">${_("Check this box to mark the course as reviewed and approved.")}</span>
+            </li>
+          </ol>
+        </div>
+
+        <hr class="divide" />
+
         <div id="schedule" class="group-settings schedule">
           <header>
             <h2 class="title-2">${_('Course Schedule')}</h2>

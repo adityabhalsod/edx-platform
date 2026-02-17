@@ -1052,6 +1052,8 @@ class CourseFields:  # lint-amnesty, pylint: disable=missing-class-docstring
         scope=Scope.settings,
     )
 
+    # This field added before
+    # -----------------------------------
     is_reviewed = Boolean(
         display_name=_("Course Reviewed"),
         help=_(
@@ -1061,6 +1063,7 @@ class CourseFields:  # lint-amnesty, pylint: disable=missing-class-docstring
         default=False,
         scope=Scope.settings,
     )
+    # -----------------------------------
 
     other_course_settings = Dict(
         display_name=_("Other Course Settings"),
