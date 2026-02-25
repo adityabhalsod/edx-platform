@@ -86,6 +86,7 @@ class CourseMetadata:
         "upstream_version",
         "upstream_version_declined",
         "upstream_display_name",
+        "is_reviewed",
     ]
 
     @classmethod

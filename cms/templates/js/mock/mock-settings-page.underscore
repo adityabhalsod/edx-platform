@@ -116,6 +116,11 @@
       <span class="tip tip-stacked">Identify the course language here. This is used to assist users find courses that are taught in a specific language. It is also used to localize the 'From:' field in bulk emails.</span>
     </li>
 
+    <li class="field">
+      <input type="checkbox" id="is-reviewed" />
+      <label for="is-reviewed">Course has been reviewed</label>
+    </li>
+
   </ol>
 </section>
 
