@@ -2384,6 +2384,9 @@ INSTALLED_APPS = [
     "openedx_learning.apps.authoring.units",
     "openedx_learning.apps.authoring.subsections",
     "openedx_learning.apps.authoring.sections",
+
+    # Reusable LTI External Configuration (proxy model + pipeline)
+    'lms.djangoapps.lti_external_config',
 ]
 
 ######################### Django Rest Framework ########################
